@@ -1,0 +1,251 @@
+openapi: "3.0.2"
+info:
+  title: API Title
+  version: "1.0"
+servers:
+  - url: http://localhost:8080/v1
+paths:
+  /items/provider/{providerName}/{providerItemId}:
+    get:
+      summary: an item from the provider
+      operationId: getItem
+      x-vertx-event-bus: items_manager.adserve
+      tags:
+        - item
+      parameters:
+        - name: providerName
+          in: path
+          description: provider name of the item
+          required: true
+          schema:
+            type: string
+        - name: providerItemId
+          in: path
+          description: provider item id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK - Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+  /items/item/{providerName}:
+    get:
+      summary: a list of items from a provider from submitted item ids
+      operationId: getItems
+      x-vertx-event-bus: items_manager.adserve
+      tags:
+        - items
+      parameters:
+        - name: providerName
+          in: path
+          description: provider name of the item
+          required: true
+          schema:
+            type: string
+        - name: providerItemIds
+          in: query
+          description: provider item ids
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        "200":
+          description: OK - Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Items"
+  /items/page/{providerName}:
+    get:
+      summary: a list of item from a provider by page
+      operationId: getItemsByPage
+      x-vertx-event-bus: items_manager.adserve
+      tags:
+        - items
+      parameters:
+        - name: providerName
+          in: path
+          description: provider name of the item
+          required: true
+          schema:
+            type: string
+        - name: sortedField
+          in: query
+          description: the item field to sort
+          required: true
+          schema:
+            type: string  
+        - name: sortedDesc
+          in: query
+          description: the item field to sort
+          required: true
+          schema:
+            type: boolean                      
+        - name: pageNum
+          in: query
+          description: required data page
+          required: true
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: required number of items per page
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK - Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ItemsPage"
+                
+  /items/search:
+    get:
+      summary: items search
+      operationId: getItemsSearchByPage
+      x-vertx-event-bus: items_manager.adserve
+      tags:
+        - items
+        - search
+      parameters:       
+        - name: searchWords
+          in: query
+          description: the search word for items
+          required: true
+          schema:
+            type: string
+        - name: maxItems
+          in: query
+          description: required data page
+          required: true
+          schema:
+            type: integer                                 
+        - name: pageNum
+          in: query
+          description: required data page
+          required: true
+          schema:
+            type: integer
+        - name: itemsPerPage
+          in: query
+          description: required number of items per page
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK - Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ItemsPage"                
+
+components:
+  schemas:
+    Item:
+      type: object
+      required:
+        - providerItemId
+        - providerName
+        - title
+        - viewItemURL
+      properties:
+        id:
+          type: string
+        providerItemId:
+          type: string
+        providerName:
+          type: string
+        relevance:
+          type: integer
+          format: int64
+        title:
+          type: string
+        viewItemURL:
+          type: string
+        subTitles:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        location:
+          type: string
+        country:
+          type: string
+        condition:
+          type: string
+        currency:
+          type: string
+        price:
+          type: integer
+          format: int64
+        priceFormatted:
+          type: string
+        source:
+          type: string
+        productId:
+          type: string
+        galleryURL:
+          type: string
+        image64BaseStr:
+          type: string
+        modifiedImage64BaseStr:
+          type: string
+        process:
+          type: boolean
+        deleted:
+          type: boolean
+        rank:
+          type: integer
+          format: int64
+        createdOn:
+          type: string
+          format: date-time
+        updatedOn:
+          type: string
+          format: date-time
+
+    Items:
+      type: array
+      items:
+        $ref: "#/components/schemas/Item"
+
+    ItemsPage:
+      type: object
+      required:
+        - totalCount
+        - pageNum
+      properties:
+        totalCount:
+          type: integer
+        pageNum:
+          type: integer
+        items:
+          $ref: "#/components/schemas/Items"
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string  
+          
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
