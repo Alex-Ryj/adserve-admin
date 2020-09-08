@@ -1,21 +1,20 @@
 package com.arit.adserve.entity;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.document.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.document.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode
@@ -61,6 +60,8 @@ public class Item {
 	/**
 	 * @return lucene document for indexing
 	 */
+	@Transient
+	@JsonIgnore
 	public Document getLuceneDocument() {
 		Document document = new Document();
 		document.add(new StoredField("id", this.id));

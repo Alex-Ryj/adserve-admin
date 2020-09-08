@@ -17,9 +17,10 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-public class Evaluate {	
-	
-	@Autowired
+public class Evaluate {
+
+    public static final String INSERTING_OBJECT_INTO_RULES = "inserting object into rules: {}";
+    @Autowired
 	private DroolsConfig droolsConfig;	
     
     /**
@@ -27,7 +28,7 @@ public class Evaluate {
      * @throws IOException
      */
     public void evaluate(Object obj) throws IOException{    
-    	log.info("inserting object into rules: {}", obj);
+    	log.info(INSERTING_OBJECT_INTO_RULES, obj);
     	KieSession kSession = droolsConfig.getKieSession();
         kSession.insert(obj); 
         kSession.fireAllRules();      
@@ -41,7 +42,7 @@ public class Evaluate {
      * @throws IOException
      */
     public void evaluate(Object obj, String agendaName) throws IOException{    
-    	log.info("inserting object into rules: {}", obj);
+    	log.info(INSERTING_OBJECT_INTO_RULES, obj);
     	KieSession kSession = droolsConfig.getKieSession();
     	kSession.getAgenda().getAgendaGroup(agendaName).setFocus();
         kSession.insert(obj); 
@@ -57,7 +58,7 @@ public class Evaluate {
     public void evaluate(Collection<Object> objs) throws IOException{
     	KieSession kSession = droolsConfig.getKieSession();    	
     	for (Object obj : objs) {
-    		log.info("inserting object into rules: {}", obj);
+    		log.info(INSERTING_OBJECT_INTO_RULES, obj);
     		kSession.insert(obj); 
 		}        
         kSession.fireAllRules();      

@@ -9,5 +9,7 @@ This is a Java application for a banner ads service.
  — The delivery of the ad banner can be direct if a natural id is used or the ad service may decide which banner to serve based on submitted criteria using rules and search functionality.  
  — The administration and statistical analysis of the ad service is done with Angular client.
  
- MongoDB Docker setup:
- docker run -d -p 27017:27017 --name mongodb mongo
+ Docker setup:
+ docker build . -t adserve-admin
+ docker run -it -p 8080:8080 -v d:/docker_volumes/search:/search adserve-admin
+ docker container stop 
